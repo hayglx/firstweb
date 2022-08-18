@@ -21,7 +21,7 @@ class Base_Object{
     {
         this.on_destroy();
         for(let i=0;i<GAME_OBJECTS.length;i++){
-            if(AX_GAME_OBJECTS[i]===this){
+            if(GAME_OBJECTS[i]===this){
                 GAME_OBJECTS.splice(i,1);
                 break;
             }
