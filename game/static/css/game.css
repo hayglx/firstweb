@@ -7,10 +7,10 @@
 }
 .game-menu-field{
     //height:70vh;
-    width:100vh;
+    width:20vw;
     position:relative;
-    top:30vh;
-    left:40vw;
+    top:30%;
+    left:40%;
 }
 .game-menu-field-item{
     color:yellow;

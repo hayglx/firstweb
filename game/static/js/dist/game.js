@@ -192,15 +192,16 @@ class Game_Player extends Base_Object{
         }
     }
     add_listening_events(){
-        this.playground.game_map.$canvas.on("contextmenu",function(){return false;});
         let outer=this;
+        this.playground.game_map.$canvas.on("contextmenu",function(){return false;});
         this.playground.game_map.$canvas.mousedown(function(e){
+            const rect=outer.ctx.canvas.getBoundingClientRect();
             if(e.which===3){
-                outer.move_to(e.clientX,e.clientY);
+                outer.move_to(e.clientX-rect.left,e.clientY-rect.top);
             }
             else if(e.which===1){
                 if(outer.cur_skill==="fireball"){
-                    outer.shoot_fireball(e.clientX,e.clientY);
+                    outer.shoot_fireball(e.clientX-rect.left,e.clientY-rect.top);
                     outer.cur_skill=null;
                 }
             }
@@ -371,7 +372,17 @@ class GamePlayground{
     constructor(root){
         this.root=root;
         this.$playground=$(`<div class="game-playground"></div>`);
+        this.hide();
         
+        
+    }
+    get_ramdom_color(){                                                 
+        let colors=["blue","red","pink","yellow","green","orange"];
+        return colors[Math.floor(Math.random()*6)];
+    }
+
+    show(){//显示游戏界面
+        this.$playground.show();
         this.root.$game.append(this.$playground);
         this.width=this.$playground.width();
         this.height=this.$playground.height();
@@ -383,15 +394,6 @@ class GamePlayground{
             this.players.push(new Game_Player(this,this.width/2,this.height/2,this.height*0.05,color,this.height*0.15,false));
         }
         this.start();
-        
-    }
-    get_ramdom_color(){                                                 
-        let colors=["blue","red","pink","yellow","green","orange"];
-        return colors[Math.floor(Math.random()*6)];
-    }
-
-    show(){//显示游戏界面
-        this.$playground.show();
     }
     hide(){//隐藏游戏界面
         this.$playground.hide();
@@ -404,7 +406,7 @@ export class F_Game{
     constructor(id){
         this.id=id;
         this.$game=$('#'+id);
-        //this.menu=new F_GameMenu(this);
+        this.menu=new F_GameMenu(this);
         this.playground= new GamePlayground(this);
     }
 }
