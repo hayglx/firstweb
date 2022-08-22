@@ -35,3 +35,112 @@
     height:100%;
     user-select:none;
 }
+.game-settings-menu{
+    width:100%;
+    height:100%;
+    background-image:url("/static/image/menu/background.gif");
+    background-size:100% 100%;
+    user-select:none;
+}
+.game-settings-login{
+    height:41vh;
+    width:20vw;
+    position:relative;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background-color:rgba(200,20,40,0.3);
+    border-radius:5px;
+
+
+}
+.game-settings-register{
+    height:50vh;
+    width:20vw;
+    position:relative;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background-color:rgba(200,20,40,0.3);
+    border-radius:5px;
+}
+
+.game-settings-title{
+    color:yellow;
+    font-size:3vh;
+    text-align:center;
+    padding-top:2vh;
+    margin-bottom:2vh;
+}
+.game-settings-username{
+    display:block;
+    height:7vh;
+}
+.game-settings-item{
+    width:100%;
+    height:100%;
+}
+
+.game-settings-item > input{
+    width:90%;
+    line-height:3vh;
+    position:relative;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+}
+.game-settings-password{
+    display:block;
+    height:7vh;
+}
+.game-settings-submit{
+    display:block;
+    height:7vh;
+}
+.game-settings-item > button{
+    color:orange;
+    width:90%;
+    line-height:3vh;
+    position:relative;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background-color:#210498;
+    border-radius:5px;
+}
+.game-settings-error{
+    color:red;
+    font-size:0.8vh;
+    display:inline;
+    float:left;
+    padding-left:1.2vw;
+}
+.game-settings-option{
+    color:white;
+    font-size:1.5vh;
+    display:inline;
+    float:right;
+    padding-right:1.2vw;
+    cursor:pointer;
+}
+.game-settings-acwing{
+    display:block;
+    height:7vh;
+}
+.game-settings-acwing > img{
+    position:relative;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    cursor:pointer;
+    display:block;
+}
+
+.game-settings-acwing > div{
+    font-size:1.5vh;
+    display:block;
+    color:#249a24;;
+    text-align:center;
+}
+
+

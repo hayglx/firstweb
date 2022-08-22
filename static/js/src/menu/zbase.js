@@ -13,11 +13,12 @@ class F_GameMenu{
         </div>
         <br>
         <div class="game-menu-field-item game-menu-field-item-settings">
-            设置
+            退出
         </div>
     </div>
 </div>
 `);
+        this.$menu.hide();
         this.root.$game.append(this.$menu);
         this.$single=this.$menu.find('.game-menu-field-item-singlemode');
         this.$multi=this.$menu.find('.game-menu-field-item-multimode');
@@ -38,6 +39,7 @@ class F_GameMenu{
         });
         this.$settings.click(function(){
             console.log("click settings");
+            outer.root.settings.logout_server();
         });
     }
     
