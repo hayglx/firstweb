@@ -84,7 +84,6 @@ class Game_Player extends Base_Object{
     }
     is_attacked(angle,damage){
         let num=10+Math.random()*5;
-        console.log(this.x,this.y,this.radius);
         for(let i=0;i<num;++i){
             let x=this.x,y=this.y;
             let radius=Math.max(this.radius,1)*(Math.random()+0.5)*0.1;

@@ -9,4 +9,5 @@ urlpatterns=[
     path("login/",game_login,name="settings_login"),
     path("logout/",game_logout,name="settings_logout"),
     path("register/",register,name="settings_register"),
+    path("acwing/",include("game.urls.settings.acwing.index")),
 ]

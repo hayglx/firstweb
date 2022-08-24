@@ -35,10 +35,8 @@ class F_GameMenu{
             outer.root.playground.show();
         });
         this.$multi.click(function(){
-            console.log("click multi mode");
         });
         this.$settings.click(function(){
-            console.log("click settings");
             outer.root.settings.logout_server();
         });
     }
@@ -245,7 +243,6 @@ class Game_Player extends Base_Object{
     }
     is_attacked(angle,damage){
         let num=10+Math.random()*5;
-        console.log(this.x,this.y,this.radius);
         for(let i=0;i<num;++i){
             let x=this.x,y=this.y;
             let radius=Math.max(this.radius,1)*(Math.random()+0.5)*0.1;
@@ -523,14 +520,19 @@ class Settings{
         this.$register_error=this.$register.find(".game-settings-error");
         this.$register_login=this.$register.find(".game-settings-option");
 
-
+        this.$acwing_login=this.$settings.find(".game-settings-acwing img");
         this.root.$game.append(this.$settings);
         this.start();
     }
     start(){
-        this.getinfo();
-        this.add_listening_events_login();
-        this.add_listening_events_register();
+        if(this.platform==='acw'){
+            this.getinfo_acapp();
+        }
+        else{
+            this.getinfo_web();
+            this.add_listening_events_login();
+            this.add_listening_events_register();
+        }
 
     }
     add_listening_events_login(){
@@ -541,6 +543,21 @@ class Settings{
         this.$login_submit.click(function(){
             outer.login_server();
         });
+        this.$acwing_login.click(function(){
+            outer.acwing_login();
+        });
+    }
+    acwing_login(){
+        $.ajax({
+            url:"https://app3157.acapp.acwing.com.cn/settings/acwing/web/apply_code/",
+            type:"GET",
+            success:function(resp){
+                if(resp.result==="success")
+                {
+                    window.location.replace(resp.apply_code_url);
+                }
+            },
+        })
     }
     add_listening_events_register(){
         let outer=this;
@@ -551,7 +568,7 @@ class Settings{
         this.$register_submit.click(function(){
             outer.register_server();
         })
-
+        
     }
     login_server(){
         let outer=this;
@@ -622,7 +639,7 @@ class Settings{
         this.$login.show();
         this.$register.hide();
     }
-    getinfo(){
+    getinfo_web(){
         let outer=this;
         $.ajax({
             url:"https://app3157.acapp.acwing.com.cn/settings/getinfo/",
@@ -643,6 +660,30 @@ class Settings{
             }
         });
     }
+    acapp_login(appid,redirect_uri,scope,state){
+        let outer=this;
+        this.root.acwos.api.oauth2.authorize(appid, redirect_uri, scope, state,function(resp){
+            console.log(resp);
+            if(resp.result==="success"){
+                outer.username=resp.username;
+                outer.photo=resp.photo;
+                outer.hide();
+                outer.root.menu.show();
+            }
+        });
+    }
+    getinfo_acapp(){
+        let outer=this;
+        console.log('getinfoacapp');
+        $.ajax({
+            url:'https://app3157.acapp.acwing.com.cn/settings/acwing/acapp/apply_code/',
+            type:'GET',
+            success:function(resp){
+                console.log(resp);
+                outer.acapp_login(resp.appid,resp.redirect_uri,resp.scope,resp.state);
+            }
+        });
+    }
     hide(){
         this.$settings.hide();
     }
@@ -659,10 +700,6 @@ export class F_Game{
         this.menu=new F_GameMenu(this);
         this.playground= new GamePlayground(this);
         this.settings.$login.hide();
-        let kk=this.settings.$settings.find('game-settings-menu');
-        kk.hide();
-        console.log(kk);
-        console.log(this.settings.$login);
         this.settings.$register.hide();
     }
 }
