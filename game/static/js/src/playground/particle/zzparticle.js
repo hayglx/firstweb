@@ -2,6 +2,7 @@ class Game_Particle extends Base_Object{
     constructor(playground,x,y,radius,color,vx,vy,speed){
         super();
         this.playground=playground;
+        this.scale=this.playground.scale;
         this.ctx=this.playground.game_map.ctx;
         this.x=x;
         this.y=y;
@@ -15,7 +16,7 @@ class Game_Particle extends Base_Object{
     }
     start(){}
     update(){
-        if(10>this.speed){
+        if(this.eps>this.speed){
             this.destroy();
             return false;
         }
@@ -26,7 +27,7 @@ class Game_Particle extends Base_Object{
     }
     render(){
         this.ctx.beginPath();
-        this.ctx.arc(this.x,this.y,this.radius,0,Math.PI*2,false);
+        this.ctx.arc(this.x*this.scale,this.y*this.scale,this.radius*this.scale,0,Math.PI*2,false);
         this.ctx.fillStyle=this.color;
         this.ctx.fill();
     }

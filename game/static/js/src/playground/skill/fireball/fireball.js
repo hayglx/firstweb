@@ -2,6 +2,7 @@ class Game_Fireball extends Base_Object{
     constructor(playground,player,x,y,radius,color,speed,move_len,vx,vy,damage){
         super();
         this.playground=playground;
+        this.scale=this.playground.scale;
         this.player=player;
         this.x=x;
         this.y=y;
@@ -50,7 +51,7 @@ class Game_Fireball extends Base_Object{
     }
     render(){
         this.ctx.beginPath();
-        this.ctx.arc(this.x,this.y,this.radius,0,Math.PI*2,false);
+        this.ctx.arc(this.x*this.scale,this.y*this.scale,this.radius*this.scale,0,Math.PI*2,false);
         this.ctx.fillStyle=this.color;
         this.ctx.fill();
     }
