@@ -3,7 +3,6 @@ class GamePlayground{
         this.root=root;
         this.$playground=$(`<div class="game-playground"></div>`);
         this.hide();
-        this.root.$game.append(this.$playground);
         this.start();
     }
     get_ramdom_color(){
@@ -19,17 +18,34 @@ class GamePlayground{
         this.scale=this.height;
         if(this.game_map)this.game_map.resize();
     }
-    show(){//显示游戏界面
+    show(mode){//显示游戏界面
+        this.root.$game.append(this.$playground);
+        this.game_map=new Game_Map(this);
         this.$playground.show();
         this.width=this.$playground.width();
         this.height=this.$playground.height();
-        this.game_map=new Game_Map(this);
+        this.notice_board=new NoticeBoard(this);
+        this.player_count=0;
+
         this.resize();
+        this.state='waiting';//waiting->fighting->over
+        this.mode=mode;
         this.players=[];
-        this.players.push(new Game_Player(this,this.width/2/this.scale,this.height/2/this.scale,0.05,"white",0.15,true));
-        for(let i=0;i<6;++i){
-            let color=this.get_ramdom_color();
-            this.players.push(new Game_Player(this,this.width/2/this.scale,0.5,0.05,color,0.15,false));
+        let outer=this;
+        this.players.push(new Game_Player(this,this.width/2/this.scale,this.height/2/this.scale,0.05,"white",0.15,'me',this.root.settings.username,this.root.settings.photo));
+
+        if(mode==="single mode"){
+            for(let i=0;i<6;++i){
+                let color=this.get_ramdom_color();
+                this.players.push(new Game_Player(this,this.width/2/this.scale,0.5,0.05,color,0.15,'robot'));
+            }
+        }
+        else if(mode=="multi mode"){
+            this.mps=new MultiPlayerSocket(this);
+
+            this.mps.ws.onopen=function(){
+                outer.mps.send_create_player(outer.root.settings.username,outer.root.settings.photo);
+            };
         }
     }
     hide(){//隐藏游戏界面

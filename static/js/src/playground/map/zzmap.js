@@ -15,7 +15,6 @@ class Game_Map extends Base_Object{
     resize(){
         this.ctx.canvas.width=this.playground.width;
         this.ctx.canvas.height=this.playground.height;
-        console.log('color');
         this.ctx.fillStyle="rgba(100,11,200,1)";
         this.ctx.fillRect(0,0,this.ctx.canvas.width,this.ctx.canvas.height);
     }

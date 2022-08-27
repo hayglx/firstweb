@@ -175,7 +175,7 @@ class Settings{
     }
     logout_server(){
         if(this.platform==='acw'){
-            return fasle;
+            this.root.acwos.api.window.close();
         }
         let outer=this;
         $.ajax({
@@ -244,7 +244,6 @@ class Settings{
     acapp_login(appid,redirect_uri,scope,state){
         let outer=this;
         this.root.acwos.api.oauth2.authorize(appid, redirect_uri, scope, state,function(resp){
-            console.log(resp);
             if(resp.result==="success"){
                 outer.username=resp.username;
                 outer.photo=resp.photo;
@@ -255,12 +254,10 @@ class Settings{
     }
     getinfo_acapp(){
         let outer=this;
-        console.log('getinfoacapp');
         $.ajax({
             url:'https://app3157.acapp.acwing.com.cn/settings/acwing/acapp/apply_code/',
             type:'GET',
             success:function(resp){
-                console.log(resp);
                 outer.acapp_login(resp.appid,resp.redirect_uri,resp.scope,resp.state);
             }
         });
