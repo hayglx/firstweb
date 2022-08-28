@@ -16,7 +16,6 @@ class Game_Fireball extends Base_Object{
         this.vy=vy;
         this.damage=damage;
         this.uuid=this.player.uuid;
-        console.log('create fireball:',this.uuid);
     }
     start(){}
     update(){

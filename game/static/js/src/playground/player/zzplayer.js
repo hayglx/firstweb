@@ -53,7 +53,7 @@ class Game_Player extends Base_Object{
         let outer=this;
         this.playground.game_map.$canvas.on("contextmenu",function(){return false;});
         this.playground.game_map.$canvas.mousedown(function(e){
-            if(outer.playground.state!=='fighting')return false;
+            if(outer.playground.state!=='fighting')return true;
             const rect=outer.ctx.canvas.getBoundingClientRect();
             if(e.which===3){//鼠标右键
                 let tx=(e.clientX-rect.left)/outer.playground.scale;
@@ -77,10 +77,22 @@ class Game_Player extends Base_Object{
                 outer.cur_skill=null;
             }
         });
-        $(window).keydown(function(e){
-            if(outer.playground.state!=='fighting')return;
+        this.playground.game_map.$canvas.keydown(function(e){
+            if(e.which===13){
+                if(outer.playground.mode==='multi mode'){//回车键打开聊天框
+                    outer.playground.chat_field.show_input();
+                    return false;
+                }
+            }
+            else if(e.which===27){
+                if(outer.playground.mode==='multi mode'){
+                    outer.playground.chat_field.hide_input();
+                    return false;
+                }
+            }
+            if(outer.playground.state!=='fighting')return true;
             if(e.which===81){//q键
-                if(outer.fireball_coldtime!=0)return;
+                if(outer.fireball_coldtime!=0)return false;
                 outer.cur_skill="fireball";
             }
             
@@ -156,7 +168,6 @@ class Game_Player extends Base_Object{
         this.render();
     }
     update_coldtime(){
-        console.log(this.fireball_coldtime);
         this.fireball_coldtime-=this.timedelta/1000;
         if(this.fireball_coldtime<0)this.fireball_coldtime=0;
     }

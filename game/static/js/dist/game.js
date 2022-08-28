@@ -113,11 +113,74 @@ requestAnimationFrame(GAME_ANIMATION);
 
 
 
+class ChatField{
+    constructor(playground){
+        this.playground=playground;
+        this.$history=$(`<div class="game-chat-field-chat"></div>`);
+        this.$input=$(`<input type='text' class='game-chat-field-input'>`);
+        this.$history.hide();
+        this.$input.hide();
+        
+        this.func_id=null;
+        this.playground.$playground.append(this.$history);
+        this.playground.$playground.append(this.$input);
+        this.start();
+    }
+    start(){
+        this.add_listening_events();
+    }
+    add_listening_events(){
+        let outer=this;
+        this.$input.keydown(function(e){
+            if(e.which===27){
+                outer.hide_input();
+                return false;
+            }
+            else if(e.which===13){
+                let username=outer.playground.root.settings.username;
+                let text=outer.$input.val();
+                if(text){
+                    outer.$input.val('');
+                    outer.add_message(username,text);
+                    outer.show_history();
+                    outer.playground.mps.send_message(text);
+                }
+                return false;
+            }
+        });
+    }
+    render_message(message){
+        return $(`<div>${message}</div>`);
+    }
+    add_message(username,text){
+        let message=`[${username}]${text}`;
+        this.$history.append(this.render_message(message));
+        this.$history.scrollTop(this.$history[0].scrollHeight);
+    }
+    show_history(){
+        let outer=this;
+        this.$history.fadeIn();
+        if(this.func_id)clearTimeout(this.func_id);
+        this.func_id=setTimeout(function(){
+            outer.$history.fadeOut();
+            outer.func_id=null;
+        },5000);
+    }
+    show_input(){
+        this.show_history();
+        this.$input.show();
+        this.$input.focus();
+    }
+    hide_input(){
+        this.$input.hide();
+        this.playground.game_map.$canvas.focus();
+    }
+}
 class Game_Map extends Base_Object{
     constructor(playground){
         super();
         this.playground=playground;
-        this.$canvas=$(`<canvas></canvas>`);
+        this.$canvas=$(`<canvas tabindex=0></canvas>`);
         this.ctx=this.$canvas[0].getContext('2d');
         this.ctx.canvas.width=this.playground.width;
         this.ctx.canvas.height=this.playground.height;
@@ -125,7 +188,7 @@ class Game_Map extends Base_Object{
     
     }
     start(){
-    
+        this.$canvas.focus();
     }
     resize(){
         this.ctx.canvas.width=this.playground.width;
@@ -255,7 +318,7 @@ class Game_Player extends Base_Object{
         let outer=this;
         this.playground.game_map.$canvas.on("contextmenu",function(){return false;});
         this.playground.game_map.$canvas.mousedown(function(e){
-            if(outer.playground.state!=='fighting')return false;
+            if(outer.playground.state!=='fighting')return true;
             const rect=outer.ctx.canvas.getBoundingClientRect();
             if(e.which===3){//鼠标右键
                 let tx=(e.clientX-rect.left)/outer.playground.scale;
@@ -279,10 +342,22 @@ class Game_Player extends Base_Object{
                 outer.cur_skill=null;
             }
         });
-        $(window).keydown(function(e){
-            if(outer.playground.state!=='fighting')return;
-            if(outer.fireball_coldtime!=0)return;
+        this.playground.game_map.$canvas.keydown(function(e){
+            if(e.which===13){
+                if(outer.playground.mode==='multi mode'){//回车键打开聊天框
+                    outer.playground.chat_field.show_input();
+                    return false;
+                }
+            }
+            else if(e.which===27){
+                if(outer.playground.mode==='multi mode'){
+                    outer.playground.chat_field.hide_input();
+                    return false;
+                }
+            }
+            if(outer.playground.state!=='fighting')return true;
             if(e.which===81){//q键
+                if(outer.fireball_coldtime!=0)return false;
                 outer.cur_skill="fireball";
             }
             
@@ -358,7 +433,6 @@ class Game_Player extends Base_Object{
         this.render();
     }
     update_coldtime(){
-        console.log(this.fireball_coldtime);
         this.fireball_coldtime-=this.timedelta/1000;
         if(this.fireball_coldtime<0)this.fireball_coldtime=0;
     }
@@ -468,7 +542,6 @@ class Game_Fireball extends Base_Object{
         this.vy=vy;
         this.damage=damage;
         this.uuid=this.player.uuid;
-        console.log('create fireball:',this.uuid);
     }
     start(){}
     update(){
@@ -559,6 +632,9 @@ class MultiPlayerSocket{
             else if(event==='attack'){
                 outer.receive_attack(uuid,data.attackee_uuid,data.x,data.y,data.angle,data.damage,data.ball_uuid);
             }
+            else if(event==='message'){
+                outer.receive_message(uuid,data.text);
+            }
         };
     }
     send_create_player(username,photo){
@@ -622,10 +698,8 @@ class MultiPlayerSocket{
         }));
     }
     receive_shoot_fireball(tx,ty,ball_uuid){
-        console.log('receiveshootfireball',ball_uuid);
         let player=this.get_player(ball_uuid);
         if(player){
-            console.log(ball_uuid);
             let fireball=player.shoot_fireball(tx,ty);
             fireball.uuid=ball_uuid;
         }
@@ -649,6 +723,20 @@ class MultiPlayerSocket{
         let attackee=this.get_player(attackee_uuid);
         if(attacker&&attackee){
             attackee.receive_attack(x,y,angle,damage,ball_uuid,attacker);
+        }
+    }
+    send_message(text){
+        let outer=this;
+        this.ws.send(JSON.stringify({
+            'event':'message',
+            'uuid':outer.uuid,
+            'text':text,
+        }));
+    }
+    receive_message(uuid,text){
+        let player=this.get_player(uuid);
+        if(player){
+            player.playground.chat_field.add_message(player.username,text);
         }
     }
 }
@@ -695,6 +783,7 @@ class GamePlayground{
             }
         }
         else if(mode=="multi mode"){
+            this.chat_field=new ChatField(this);
             this.mps=new MultiPlayerSocket(this);
 
             this.mps.ws.onopen=function(){

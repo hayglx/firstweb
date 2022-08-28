@@ -28,6 +28,9 @@ class MultiPlayerSocket{
             else if(event==='attack'){
                 outer.receive_attack(uuid,data.attackee_uuid,data.x,data.y,data.angle,data.damage,data.ball_uuid);
             }
+            else if(event==='message'){
+                outer.receive_message(uuid,data.text);
+            }
         };
     }
     send_create_player(username,photo){
@@ -91,10 +94,8 @@ class MultiPlayerSocket{
         }));
     }
     receive_shoot_fireball(tx,ty,ball_uuid){
-        console.log('receiveshootfireball',ball_uuid);
         let player=this.get_player(ball_uuid);
         if(player){
-            console.log(ball_uuid);
             let fireball=player.shoot_fireball(tx,ty);
             fireball.uuid=ball_uuid;
         }
@@ -118,6 +119,20 @@ class MultiPlayerSocket{
         let attackee=this.get_player(attackee_uuid);
         if(attacker&&attackee){
             attackee.receive_attack(x,y,angle,damage,ball_uuid,attacker);
+        }
+    }
+    send_message(text){
+        let outer=this;
+        this.ws.send(JSON.stringify({
+            'event':'message',
+            'uuid':outer.uuid,
+            'text':text,
+        }));
+    }
+    receive_message(uuid,text){
+        let player=this.get_player(uuid);
+        if(player){
+            player.playground.chat_field.add_message(player.username,text);
         }
     }
 }
