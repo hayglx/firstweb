@@ -17,7 +17,7 @@ def register(request):
     user=User(username=username)
     user.set_password(password)
     user.save()
-    Player.objects.create(user=user,photo='https://picb2.photophoto.cn/11/487/11487481_1.jpg')
+    Player.objects.create(user=user,photo='/static/image/playground/headportrait')
     login(request,user)
     return JsonResponse({
         'result':'success',

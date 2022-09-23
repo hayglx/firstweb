@@ -33,7 +33,7 @@ class Settings{
         </div>
         <br>
         <div class='game-settings-acwing'>
-            <img width='30' src='https://app3157.acapp.acwing.com.cn/static/image/settings/acwlogo.png'>
+            <!--img width='30' src='http://qwevzx.asia/static/image/settings/acwlogo.png'-->
             <br>
             <div>
                 AcWing一键登录
@@ -72,12 +72,15 @@ class Settings{
         </div>
         <br>
         <div class='game-settings-acwing'>
-            <img width='30' src='https://app3157.acapp.acwing.com.cn/static/image/settings/acwlogo.png'>
+            <!--img width='30' src='http://qwevzx.asia/static/image/settings/acwlogo.png'-->
             <br>
             <div>
                 AcWing一键登录
             </div>
         </div>
+    </div>
+    <div class='gongan-beian'>
+        <a href="https://beian.miit.gov.cn/" target='_blank' class='test'>鄂ICP备2022015143号-1</a>
     </div>
 </div>
 `);
@@ -130,7 +133,7 @@ class Settings{
     }
     acwing_login(){
         $.ajax({
-            url:"https://app3157.acapp.acwing.com.cn/settings/acwing/web/apply_code/",
+            url:"http://qwevzx.asia/settings/acwing/web/apply_code/",
             type:"GET",
             success:function(resp){
                 if(resp.result==="success")
@@ -157,7 +160,7 @@ class Settings{
         let password=this.$login_password.val();
         this.$login_error.empty();
         $.ajax({
-            url:'https://app3157.acapp.acwing.com.cn/settings/login/',
+            url:'http://qwevzx.asia/settings/login/',
             type:'GET',
             data:{
                 username:username,
@@ -179,7 +182,7 @@ class Settings{
         }
         let outer=this;
         $.ajax({
-            url:'https://app3157.acapp.acwing.com.cn/settings/logout/',
+            url:'http://qwevzx.asia/settings/logout/',
             type:'GET',
             success:function(resp){
                 if(resp.result==='success')
@@ -195,7 +198,7 @@ class Settings{
         let password_confirm=this.$register_password_confirm.val();
         this.$register_error.empty()
         $.ajax({
-            url:'https://app3157.acapp.acwing.com.cn/settings/register/',
+            url:'http://qwevzx.asia/settings/register/',
             type:'GET',
             data:{
                 username:username,
@@ -223,7 +226,7 @@ class Settings{
     getinfo_web(){
         let outer=this;
         $.ajax({
-            url:"https://app3157.acapp.acwing.com.cn/settings/getinfo/",
+            url:"http://qwevzx.asia/settings/getinfo/",
             type:"GET",
             data:{
                 platform:outer.platform,
@@ -255,7 +258,7 @@ class Settings{
     getinfo_acapp(){
         let outer=this;
         $.ajax({
-            url:'https://app3157.acapp.acwing.com.cn/settings/acwing/acapp/apply_code/',
+            url:'http://qwevzx.asia/settings/acwing/acapp/apply_code/',
             type:'GET',
             success:function(resp){
                 outer.acapp_login(resp.appid,resp.redirect_uri,resp.scope,resp.state);

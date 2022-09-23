@@ -144,7 +144,9 @@ class Game_Player extends Base_Object{
             new Game_Particle(this.playground,x,y,radius,color,vx,vy,speed);
         }
         this.radius-=damage;
+        console.log(this.radius);
         if(this.radius<this.eps){
+            console.log('destroy');
             this.destroy();
             return false;
         }
@@ -225,6 +227,7 @@ class Game_Player extends Base_Object{
             this.ctx.fill();
         }
         if(this.character==='me'&&this.playground.state==='fighting'){
+            console.log('renderthis',this.x,this.y);
             this.render_skill_coldtime();
         }
     }
@@ -248,6 +251,7 @@ class Game_Player extends Base_Object{
         }
     }
     on_destroy(){
+        console.log('death');
         if(this.character==='me'){
             this.playground.state='over';
         }

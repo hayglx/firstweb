@@ -6,11 +6,12 @@
 
 </head>
 <body style="margin: 0">
-    <div id="menu_content"></div>
+    <div id="menu_content"> </div>
     <script type="module">
         import {F_Game} from "{% static 'js/dist/game.js' %}";
         $(document).ready(function(){
             let first_game=new F_Game("menu_content");
+            console.log("index.html");
         });
     </script>
 </body>

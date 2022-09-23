@@ -176,3 +176,21 @@
     font-size:2vh;
     background-color:rgb(255 255 255 / 53%);
 }
+
+.gongan-beian{
+    position:absolute;
+    height:2vh;
+    width:20vw;
+    top:95%;
+    font-size:2vh;
+    left:45%;
+    font-color:black;
+}
+a:visited{
+    color:white;
+}
+.test{
+    color:white;
+    text-decoration:none;
+    link
+}
