@@ -21,7 +21,7 @@ from channels.layers import get_channel_layer
 channel_layer = get_channel_layer()
 
 application = ProtocolTypeRouter({
-    "http": get_asgi_application(),
+    #"http": get_asgi_application(),
     "websocket": AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
 })
-
+print("this is asgi.py***********")

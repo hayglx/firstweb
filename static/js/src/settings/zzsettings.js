@@ -33,11 +33,8 @@ class Settings{
         </div>
         <br>
         <div class='game-settings-acwing'>
-            <!--img width='30' src='http://qwevzx.asia/static/image/settings/acwlogo.png'-->
+            <!--img width='30' src='https://qwevzx.asia/static/image/settings/acwlogo.png'-->
             <br>
-            <div>
-                AcWing一键登录
-            </div>
         </div>
 
     </div>
@@ -72,11 +69,8 @@ class Settings{
         </div>
         <br>
         <div class='game-settings-acwing'>
-            <!--img width='30' src='http://qwevzx.asia/static/image/settings/acwlogo.png'-->
+            <!--img width='30' src='https://qwevzx.asia/static/image/settings/acwlogo.png'-->
             <br>
-            <div>
-                AcWing一键登录
-            </div>
         </div>
     </div>
     <div class='gongan-beian'>
@@ -113,7 +107,11 @@ class Settings{
             this.getinfo_acapp();
         }
         else{
-            this.getinfo_web();
+            if(this.root.access){
+                this.getinfo_web();
+            }else{
+                this.login();
+            }
             this.add_listening_events_login();
             this.add_listening_events_register();
         }
@@ -133,7 +131,7 @@ class Settings{
     }
     acwing_login(){
         $.ajax({
-            url:"http://qwevzx.asia/settings/acwing/web/apply_code/",
+            url:"https://qwevzx.asia/settings/acwing/web/apply_code/",
             type:"GET",
             success:function(resp){
                 if(resp.result==="success")
@@ -155,24 +153,25 @@ class Settings{
         
     }
     login_server(){
-        let outer=this;
         let username=this.$login_username.val();
         let password=this.$login_password.val();
         this.$login_error.empty();
         $.ajax({
-            url:'http://qwevzx.asia/settings/login/',
-            type:'GET',
+            url:'https://qwevzx.asia/settings/token/',
+            type:'POST',
             data:{
                 username:username,
                 password:password,
             },
-            success:function(resp){
-                if(resp.result==='success'){
-                    location.reload();
-                }
-                else{
-                    outer.$login_error.html(resp.result);
-                }
+            success:resp=>{
+                this.root.access=resp.access;
+                this.root.refresh=resp.refresh;
+                this.getinfo_web();
+                console.log("gettoken success");
+            },
+            error:err=>{
+                console.log(err);
+                this.$login_error.html("用户名或密码错误")
             }
         })
     }
@@ -180,16 +179,11 @@ class Settings{
         if(this.platform==='acw'){
             this.root.acwos.api.window.close();
         }
-        let outer=this;
-        $.ajax({
-            url:'http://qwevzx.asia/settings/logout/',
-            type:'GET',
-            success:function(resp){
-                if(resp.result==='success')
-                    location.reload();
-            }
-        });
-
+        else{
+            this.root.access="";
+            this.root.refresh="";
+            location.href='/';
+        }
     }
     register_server(){
         let outer=this;
@@ -198,7 +192,7 @@ class Settings{
         let password_confirm=this.$register_password_confirm.val();
         this.$register_error.empty()
         $.ajax({
-            url:'http://qwevzx.asia/settings/register/',
+            url:'https://qwevzx.asia/settings/register/',
             type:'GET',
             data:{
                 username:username,
@@ -226,10 +220,13 @@ class Settings{
     getinfo_web(){
         let outer=this;
         $.ajax({
-            url:"http://qwevzx.asia/settings/getinfo/",
+            url:"https://qwevzx.asia/settings/getinfo/",
             type:"GET",
             data:{
                 platform:outer.platform,
+            },
+            headers:{
+                'Authorization':'Bearer '+this.root.access,
             },
             success:function(resp){
                 if(resp.result==="success"){
@@ -258,7 +255,7 @@ class Settings{
     getinfo_acapp(){
         let outer=this;
         $.ajax({
-            url:'http://qwevzx.asia/settings/acwing/acapp/apply_code/',
+            url:'https://qwevzx.asia/settings/acwing/acapp/apply_code/',
             type:'GET',
             success:function(resp){
                 outer.acapp_login(resp.appid,resp.redirect_uri,resp.scope,resp.state);

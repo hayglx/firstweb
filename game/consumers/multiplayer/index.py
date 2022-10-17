@@ -14,6 +14,7 @@ from channels.db import database_sync_to_async
 
 class MultiPlayer(AsyncWebsocketConsumer):
     async def connect(self):
+        print("connected*************************************************************************************************************************")
         await self.accept()
 
     async def disconnect(self, close_code):
@@ -23,6 +24,7 @@ class MultiPlayer(AsyncWebsocketConsumer):
     async def create_player(self,data):
         self.room_name=None
         self.uuid=data['uuid']
+        print(self.uuid)
         transport =TSocket.TSocket('127.0.0.1',9090)
         transport =TTransport.TBufferedTransport(transport)
         protocol=TBinaryProtocol.TBinaryProtocol(transport)

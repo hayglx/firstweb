@@ -1,54 +1,58 @@
 class F_GameMenu{
-    constructor(root){
-        this.root=root;
-        this.$menu = $(`
+	constructor(root){
+		this.root=root;
+		this.$menu = $(`
 <div class="game-menu">
-    <div class="game-menu-field">
-        <div class="game-menu-field-item game-menu-field-item-singlemode">
-            单人模式
-        </div>
-        <br>
-        <div class="game-menu-field-item game-menu-field-item-multimode">
-            多人模式
-        </div>
-        <br>
-        <div class="game-menu-field-item game-menu-field-item-settings">
-            退出
-        </div>
-    </div>
+	<div class="game-menu-field">
+		<div class="game-menu-field-item game-menu-field-item-singlemode">
+			单人模式
+		</div>
+		<br>
+		<div class="game-menu-field-item game-menu-field-item-multimode">
+			多人模式
+		</div>
+		<br>
+		<div class="game-menu-field-item game-menu-field-item-settings">
+			退出
+		</div>
+	</div>
+	<div class='gongan-beian'>
+		<a href="https://beian.miit.gov.cn/" target='_blank' class='test'>鄂ICP备2022015143号-1</a>
+	</div>
+
 </div>
 `);
-        this.$menu.hide();
-        this.root.$game.append(this.$menu);
-        this.$single=this.$menu.find('.game-menu-field-item-singlemode');
-        this.$multi=this.$menu.find('.game-menu-field-item-multimode');
-        this.$settings=this.$menu.find('.game-menu-field-item-settings');
-        this.start();
-    }
-    start(){
-        this.add_listening_events();
-    }
-    add_listening_events(){
-        let outer=this;
-        this.$single.click(function(){
-            outer.hide();
-            outer.root.playground.show("single mode");
-        });
-        this.$multi.click(function(){
-            outer.hide();
-            outer.root.playground.show("multi mode");
-        });
-        this.$settings.click(function(){
-            outer.root.settings.logout_server();
-        });
-    }
-    
-    show(){//显示menu页面
-        this.$menu.show();
-    }
-    hide(){//隐藏menu界面
-        this.$menu.hide();
-    }
+		this.$menu.hide();
+		this.root.$game.append(this.$menu);
+		this.$single=this.$menu.find('.game-menu-field-item-singlemode');
+		this.$multi=this.$menu.find('.game-menu-field-item-multimode');
+		this.$settings=this.$menu.find('.game-menu-field-item-settings');
+		this.start();
+	}
+	start(){
+		this.add_listening_events();
+	}
+	add_listening_events(){
+		let outer=this;
+		this.$single.click(function(){
+			outer.hide();
+			outer.root.playground.show("single mode");
+		});
+		this.$multi.click(function(){
+			outer.hide();
+			outer.root.playground.show("multi mode");
+		});
+		this.$settings.click(function(){
+			outer.root.settings.logout_server();
+		});
+	}
+
+	show(){//显示menu页面
+		this.$menu.show();
+	}
+	hide(){//隐藏menu界面
+		this.$menu.hide();
+	}
 }
 let GAME_OBJECTS=[];
 class Base_Object{
@@ -610,7 +614,7 @@ class MultiPlayerSocket{
     constructor(playground){
         this.playground=playground;
         this.uuid=this.playground.players[0].uuid;
-        this.ws=new WebSocket("ws://47.122.18.152/wss/multiplayer/");
+        this.ws=new WebSocket("wss://qwevzx.asia/wss/multiplayer/");
         this.start();
     }
     start(){
@@ -840,11 +844,8 @@ class Settings{
         </div>
         <br>
         <div class='game-settings-acwing'>
-            <!--img width='30' src='http://qwevzx.asia/static/image/settings/acwlogo.png'-->
+            <!--img width='30' src='https://qwevzx.asia/static/image/settings/acwlogo.png'-->
             <br>
-            <div>
-                AcWing一键登录
-            </div>
         </div>
 
     </div>
@@ -879,11 +880,8 @@ class Settings{
         </div>
         <br>
         <div class='game-settings-acwing'>
-            <!--img width='30' src='http://qwevzx.asia/static/image/settings/acwlogo.png'-->
+            <!--img width='30' src='https://qwevzx.asia/static/image/settings/acwlogo.png'-->
             <br>
-            <div>
-                AcWing一键登录
-            </div>
         </div>
     </div>
     <div class='gongan-beian'>
@@ -920,7 +918,11 @@ class Settings{
             this.getinfo_acapp();
         }
         else{
-            this.getinfo_web();
+            if(this.root.access){
+                this.getinfo_web();
+            }else{
+                this.login();
+            }
             this.add_listening_events_login();
             this.add_listening_events_register();
         }
@@ -940,7 +942,7 @@ class Settings{
     }
     acwing_login(){
         $.ajax({
-            url:"http://qwevzx.asia/settings/acwing/web/apply_code/",
+            url:"https://qwevzx.asia/settings/acwing/web/apply_code/",
             type:"GET",
             success:function(resp){
                 if(resp.result==="success")
@@ -962,24 +964,25 @@ class Settings{
         
     }
     login_server(){
-        let outer=this;
         let username=this.$login_username.val();
         let password=this.$login_password.val();
         this.$login_error.empty();
         $.ajax({
-            url:'http://qwevzx.asia/settings/login/',
-            type:'GET',
+            url:'https://qwevzx.asia/settings/token/',
+            type:'POST',
             data:{
                 username:username,
                 password:password,
             },
-            success:function(resp){
-                if(resp.result==='success'){
-                    location.reload();
-                }
-                else{
-                    outer.$login_error.html(resp.result);
-                }
+            success:resp=>{
+                this.root.access=resp.access;
+                this.root.refresh=resp.refresh;
+                this.getinfo_web();
+                console.log("gettoken success");
+            },
+            error:err=>{
+                console.log(err);
+                this.$login_error.html("用户名或密码错误")
             }
         })
     }
@@ -987,16 +990,11 @@ class Settings{
         if(this.platform==='acw'){
             this.root.acwos.api.window.close();
         }
-        let outer=this;
-        $.ajax({
-            url:'http://qwevzx.asia/settings/logout/',
-            type:'GET',
-            success:function(resp){
-                if(resp.result==='success')
-                    location.reload();
-            }
-        });
-
+        else{
+            this.root.access="";
+            this.root.refresh="";
+            location.href='/';
+        }
     }
     register_server(){
         let outer=this;
@@ -1005,7 +1003,7 @@ class Settings{
         let password_confirm=this.$register_password_confirm.val();
         this.$register_error.empty()
         $.ajax({
-            url:'http://qwevzx.asia/settings/register/',
+            url:'https://qwevzx.asia/settings/register/',
             type:'GET',
             data:{
                 username:username,
@@ -1033,10 +1031,13 @@ class Settings{
     getinfo_web(){
         let outer=this;
         $.ajax({
-            url:"http://qwevzx.asia/settings/getinfo/",
+            url:"https://qwevzx.asia/settings/getinfo/",
             type:"GET",
             data:{
                 platform:outer.platform,
+            },
+            headers:{
+                'Authorization':'Bearer '+this.root.access,
             },
             success:function(resp){
                 if(resp.result==="success"){
@@ -1065,7 +1066,7 @@ class Settings{
     getinfo_acapp(){
         let outer=this;
         $.ajax({
-            url:'http://qwevzx.asia/settings/acwing/acapp/apply_code/',
+            url:'https://qwevzx.asia/settings/acwing/acapp/apply_code/',
             type:'GET',
             success:function(resp){
                 outer.acapp_login(resp.appid,resp.redirect_uri,resp.scope,resp.state);
@@ -1080,14 +1081,17 @@ class Settings{
     }
 }
 export class F_Game{
-    constructor(id,acwos){
+    constructor(id,acwos,access,refresh){
+        console.log("this.F_game");
         this.acwos=acwos;
         this.id=id;
+        this.access=access;
+        this.refresh=refresh;
         this.$game=$('#'+id);
         this.menu=new F_GameMenu(this);
         this.settings=new Settings(this);
         this.playground= new GamePlayground(this);
-        this.settings.$login.hide();
-        this.settings.$register.hide();
+       // this.settings.$login.hide();
+       // this.settings.$register.hide();
     }
 }
