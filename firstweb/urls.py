@@ -19,4 +19,5 @@ from django.urls import path,include
 urlpatterns = [
     path('',include('game.urls.index')),
     path('admin/', admin.site.urls),
+    path('takenote/', include('snippets.urls')),
 ]

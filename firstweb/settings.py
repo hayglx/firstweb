@@ -26,7 +26,6 @@ SECRET_KEY = 'django-insecure-iv20anhq+ebf&8ptij9dlyqimdv0og#3%1w1=fh#a^%px4z7=(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["47.122.18.152","qwevzx.asia"]     #,"app3157.acapp.acwing.com.cn"]
 
 
 CACHES = { 
@@ -54,6 +53,8 @@ INSTALLED_APPS = [
         'django.contrib.messages',
         'django.contrib.staticfiles',
         'sslserver',
+        'snippets',
+        'corsheaders',
         ]
 
 MIDDLEWARE = [
@@ -64,14 +65,16 @@ MIDDLEWARE = [
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        'corsheaders.middleware.CorsMiddleware',  # 注册中间件
+        'django.middleware.common.CommonMiddleware',
         ]
 
 ROOT_URLCONF = 'firstweb.urls'
-
+SECURE_CONTENT_TYPE_NOSNIFF=False
 TEMPLATES = [
         {
             'BACKEND': 'django.template.backends.django.DjangoTemplates',
-            'DIRS': [],
+            'DIRS': [os.path.join(BASE_DIR, 'templates')],
             'APP_DIRS': True,
             'OPTIONS': {
                 'context_processors': [
@@ -192,3 +195,40 @@ SIMPLE_JWT = {
         'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
         }
 
+
+# ALLOWED_HOSTS = ["47.122.18.152","qwevzx.asia"]     #,"app3157.acapp.acwing.com.cn"]
+ALLOWED_HOSTS = ["*"]
+# 跨域增加忽略
+# CORS_ALLOW_CREDENTIALS = True
+# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_HEADERS = ('*')
+
+
+
+# CORS_ORIGIN_REGEX_WHITELIST = [r"^.*$"]
+# CORS_ORIGIN_WHITELIST = ("47.122.18.152","qwevzx.asia")
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+    'VIEW',
+)
+
+# CORS_ALLOW_HEADERS = (
+#     'XMLHttpRequest',
+#     'X_FILENAME',
+#     'accept-encoding',
+#     'authorization',
+#     'content-type',
+#     'dnt',
+#     'origin',
+#     'user-agent',
+#     'x-csrftoken',
+#     'x-requested-with',
+#     'Pragma',
+# )

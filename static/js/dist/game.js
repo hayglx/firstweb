@@ -942,7 +942,7 @@ class Settings{
     }
     acwing_login(){
         $.ajax({
-            url:"https://qwevzx.asia/settings/acwing/web/apply_code/",
+            url:"settings/acwing/web/apply_code/",
             type:"GET",
             success:function(resp){
                 if(resp.result==="success")
@@ -968,7 +968,7 @@ class Settings{
         let password=this.$login_password.val();
         this.$login_error.empty();
         $.ajax({
-            url:'https://qwevzx.asia/settings/token/',
+            url:'settings/token/',
             type:'POST',
             data:{
                 username:username,
@@ -1003,7 +1003,7 @@ class Settings{
         let password_confirm=this.$register_password_confirm.val();
         this.$register_error.empty()
         $.ajax({
-            url:'https://qwevzx.asia/settings/register/',
+            url:'settings/register/',
             type:'GET',
             data:{
                 username:username,
@@ -1031,7 +1031,7 @@ class Settings{
     getinfo_web(){
         let outer=this;
         $.ajax({
-            url:"https://qwevzx.asia/settings/getinfo/",
+            url:"settings/getinfo/",
             type:"GET",
             data:{
                 platform:outer.platform,
@@ -1066,7 +1066,7 @@ class Settings{
     getinfo_acapp(){
         let outer=this;
         $.ajax({
-            url:'https://qwevzx.asia/settings/acwing/acapp/apply_code/',
+            url:'settings/acwing/acapp/apply_code/',
             type:'GET',
             success:function(resp){
                 outer.acapp_login(resp.appid,resp.redirect_uri,resp.scope,resp.state);
