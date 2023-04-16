@@ -84,6 +84,17 @@ def addnote(request, format=None):
     elif request.method == 'POST':
         data = request.data
 
+        for category in data["categories"]:
+            category["user"] = "111"
+            serializer = CategorySerializer(data=category)
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                serializer = CategorySerializer(
+                    Category.objects.get(pk=category["id"]), data=category)
+                if serializer.is_valid():
+                    serializer.save()
+                    
         for note in data["notes"]:
             if note["category"] == '':
                 default = Category.objects.filter(name="default")
@@ -100,7 +111,6 @@ def addnote(request, format=None):
             serializer = NoteSerializer(data=note)
             # serializer.is_valid(raise_exception=True)
             if serializer.is_valid():
-                print('note save %%%%%%%****')
                 serializer.save()
             else:
                 serializer = NoteSerializer(
@@ -108,11 +118,7 @@ def addnote(request, format=None):
                 if serializer.is_valid():
                     serializer.save()
 
-        for category in data["categories"]:
-            category["user"] = "111"
-            serializer = CategorySerializer(data=category)
-            if serializer.is_valid():
-                serializer.save()
+        
 
         return Response("", status=status.HTTP_201_CREATED)
     elif request.method == 'DELETE':

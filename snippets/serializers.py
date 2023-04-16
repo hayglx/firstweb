@@ -6,6 +6,13 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'user', 'draggedOver', 'name']
+    def update(self, instance, validated_data):
+        instance.id = validated_data.get('id', instance.id)
+        instance.user = validated_data.get('user', instance.user)
+        instance.draggedOver = validated_data.get('draggedOver', instance.draggedOver)
+        instance.name = validated_data.get('name', instance.name)
+        instance.save()
+        return instance
 
 
 class NoteSerializer(serializers.ModelSerializer):
@@ -22,8 +29,7 @@ class NoteSerializer(serializers.ModelSerializer):
         instance.category = validated_data.get('category', instance.category)
         instance.created = validated_data.get('created', instance.created)
         instance.favorite = validated_data.get('favorite', instance.favorite)
-        instance.lastUpdated = validated_data.get(
-            'lastUpdated', instance.lastUpdated)
+        instance.lastUpdated = validated_data.get('lastUpdated', instance.lastUpdated)
         instance.text = validated_data.get('text', instance.text)
         instance.save()
         return instance

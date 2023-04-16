@@ -1,6 +1,6 @@
+db.sqlite3
 **/__pycache__
 *.swp
 static*
 django_2_drf_uwsgi/
 dist*
-db.sqlite3

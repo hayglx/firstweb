@@ -1,6 +1,6 @@
 cd ..
 sudo redis-server /etc/redis/redis.conf
-sudo /etc/init.d/nginx start
+sudo /etc/init.d/nginx restart
 uwsgi --ini uwsgi.ini
-daphne -b 0.0.0.0 -p 5015 firstweb.asgi:application
-~/firstweb/match_system/src/main.py
+# daphne -b 0.0.0.0 -p 5015 firstweb.asgi:application
+# ~/firstweb/match_system/src/main.py
