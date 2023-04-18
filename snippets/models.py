@@ -10,7 +10,7 @@ STYLE_CHOICES = sorted([(item, item) for item in get_all_styles()])
 class User(models.Model):
     id = models.CharField(max_length=200, primary_key=True)
     name = models.CharField(max_length=100, blank=True, default='')
-
+    password = models.CharField(max_length=100, blank=True, default='')
     class Meta:
         ordering = ['id']
 

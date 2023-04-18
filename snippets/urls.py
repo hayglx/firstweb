@@ -4,10 +4,12 @@ from snippets import views
 
 urlpatterns = [
     path('', views.hello),
-    path('note/', views.note_list),
-    path('user/', views.usr_list),
-    path('category/', views.category_list),
-    path('addnote/', views.addnote),
+    path('register/', views.register),#register
+    path('login/', views.login),#login
+    path('note/', views.note_list),#get note list
+    path('user/', views.usr_list),#get user list
+    path('category/', views.category_list),#get category list
+    path('addnote/', views.addnote),#update note and category
 
     # path('snippets/<int:pk>/', views.snippet_detail),
 ]

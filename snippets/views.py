@@ -4,11 +4,64 @@ from rest_framework.response import Response
 from snippets.models import Category, Note, User
 from snippets.serializers import CategorySerializer, NoteSerializer, UserSerializer
 from django.shortcuts import render
-
+import hashlib
+from django.http import HttpResponse,JsonResponse
+MAX_USER_NUM=10
+SECRET_KEY=''
+with open('/home/kk/firstweb/secret_key','r') as f:
+    SECRET_KEY=f.readline()
+    print(SECRET_KEY,'***************************')
 
 def hello(request):
     return render(request, template_name='index.html')
 
+@api_view(['GET','POST','DELETE'])
+def register(request, format=None):
+    if request.method == 'GET':
+        category = User.objects.all()
+        serializer = UserSerializer(category, many=True)
+        return Response(serializer.data)
+    if request.method == 'POST':
+        data=request.data
+        if "password" in data and len(data["password"])>=8:
+            md5_obj=hashlib.md5()
+            md5_obj.update(data["password"].encode())
+            data["password"]=md5_obj.hexdigest()
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = UserSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    if request.method == 'DELETE':
+        data = request.data
+        if 'id' in data:
+            user =  User.objects.get(pk=data["id"])
+            if user:
+                user.delete()
+                return Response("", status=status.HTTP_201_CREATED)
+        return Response("id not exist", status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+def login(request, format=None):
+    if request.method == 'POST':
+        data = request.data
+        if 'name' in data and 'password' in data:
+            username=data["name"]
+            password=data["password"]
+            user = User.objects.get(pk=username)
+            if user:
+                md5_obj=hashlib.md5()
+                md5_obj.update(password.encode())
+                if user.password == md5_obj.hexdigest():
+                    token = ""
+                    res=HttpResponse()
+                    res.status_code=201
+                    res.set_cookie('token',token)
+                    print(SECRET_KEY,'***************************22')
+                    return res
+    return Response('name not exist or wrong password', status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST'])
 def note_list(request, format=None):
